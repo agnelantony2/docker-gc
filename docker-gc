@@ -254,7 +254,7 @@ then
     container_log "Dry Run: Container removed" containers.reap
 else
     container_log "Container removed" containers.reap
-    #xargs -n 1 $DOCKER rm --volumes=true < containers.reap &>/dev/null || true
+    xargs -n 1 $DOCKER rm --volumes=true < containers.reap &>/dev/null || true
 fi
 
 if [[ "$DRY_RUN" = "true" || "$DRY_RUN_IMAGES" = "true" ]]
@@ -266,4 +266,3 @@ else
     image_log "Removing image" images.reap
     xargs -n 1 $DOCKER rmi < images.reap &>/dev/null || true
 fi
-
