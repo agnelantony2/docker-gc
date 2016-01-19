@@ -50,6 +50,9 @@ LOG_TO_SYSLOG=${LOG_TO_SYSLOG:=0}
 SYSLOG_FACILITY=${SYSLOG_FACILITY:=user}
 SYSLOG_LEVEL=${SYSLOG_LEVEL:=info}
 SYSLOG_TAG=${SYSLOG_TAG:=docker-gc}
+DRY_RUN=${DRY_RUN:=false}
+DRY_RUN_CONTAINERS=${DRY_RUN_CONTAINERS:=false}
+DRY_RUN_IMAGES=${DRY_RUN_IMAGES:=false}
 
 for pid in $(pidof -s docker-gc); do
     if [[ $pid != $$ ]]; then
@@ -245,10 +248,22 @@ do
 done
 comm -23 images.reap.tmp images.used | grep -v -f $EXCLUDE_IDS_FILE > images.reap || true
 
-# Reap containers.
-container_log "Container removed" containers.reap
-xargs -n 1 $DOCKER rm --volumes=true < containers.reap &>/dev/null || true
+if [[ "$DRY_RUN" = "true" || "$DRY_RUN_CONTAINERS" = "true" ]]
+then
+    # Dry Run Reap containers.
+    container_log "Dry Run: Container removed" containers.reap
+else
+    container_log "Container removed" containers.reap
+    #xargs -n 1 $DOCKER rm --volumes=true < containers.reap &>/dev/null || true
+fi
 
-# Reap images.
-image_log "Removing image" images.reap
-xargs -n 1 $DOCKER rmi < images.reap &>/dev/null || true
+if [[ "$DRY_RUN" = "true" || "$DRY_RUN_IMAGES" = "true" ]]
+then
+    # Dry Run Reap images.
+    image_log "Dry Run: Removing image" images.reap
+else
+    # Reap images.
+    image_log "Removing image" images.reap
+    xargs -n 1 $DOCKER rmi < images.reap &>/dev/null || true
+fi
+

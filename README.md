@@ -95,6 +95,28 @@ mariadb-data
 drunk_goodall
 ```
 
+### Dry Run
+
+If you want to do a dry run and see what will be deleted without actually really deleting images or containers you can use the ```DRY_RUN-flags```:
+
+```
+DRY_RUN=true docker-gc
+```
+
+the above will do a dry run for both containers and images.
+
+```
+DRY_RUN_CONTAINERS=true docker-gc
+```
+
+The above does a dry run only on containers. The flag alone can therefore be used in order to exclude the deletion of containers and only delete images.
+
+```
+DRY_RUN_IMAGES=true docker-gc
+```
+
+the above does a dry run only on images. The flag alone can therefore be used in order to exclude the deletion of images and only delete containers.
+
 ## Running as a Docker Image
 
 A Dockerfile is provided as an alternative to a local installation. By default
@@ -111,7 +133,7 @@ matches with your Docker daemon), simply edit [the `ENV DOCKER_VERSION` line in
 Build the Docker image with `make -f Makefile.docker image` or:
 
 ```sh
-docker build -t spotify/docker-gc .
+docker build -t docker-gc .
 ```
 
 #### Running as a Docker Container
@@ -120,7 +142,13 @@ The docker-gc container requires access to the docker socket in order to
 function, so you need to map it when running, e.g.:
 
 ```sh
-$ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /etc:/etc spotify/docker-gc
+$ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /etc:/etc docker-gc
+```
+
+You can of course pass any environment variables to the container. The example below shows how to run docker-gc in dry run mode:
+
+```sh
+$ docker run --rm -e "DRY_RUN=true" -v /var/run/docker.sock:/var/run/docker.sock -v /etc:/etc docker-gc
 ```
 
 The `/etc` directory is also mapped so that it can read any exclude files
