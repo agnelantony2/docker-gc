@@ -37,7 +37,7 @@
 # containers were removed. To enable logging to syslog, set LOG_TO_SYSLOG=1.
 # When disabled, this script will instead log to standard out. When syslog is
 # enabled, the syslog facility and logger can be configured with
-# $SYSLOG_FACILITY and $SYSLOG_LEVEL respectively. 
+# $SYSLOG_FACILITY and $SYSLOG_LEVEL respectively.
 
 set -o nounset
 set -o errexit
@@ -54,6 +54,9 @@ DRY_RUN=${DRY_RUN:=false}
 DRY_RUN_CONTAINERS=${DRY_RUN_CONTAINERS:=false}
 DRY_RUN_IMAGES=${DRY_RUN_IMAGES:=false}
 
+EXCLUDE_IMAGES=${EXCLUDE_IMAGES:=}
+EXCLUDE_CONTAINERS=${EXCLUDE_CONTAINERS:=}
+
 for pid in $(pidof -s docker-gc); do
     if [[ $pid != $$ ]]; then
         echo "[$(date)] : docker-gc : Process is already running with PID $pid"
@@ -69,13 +72,25 @@ echo $$ > $PID_DIR/dockergc
 EXCLUDE_FROM_GC=${EXCLUDE_FROM_GC:=/etc/docker-gc-exclude}
 if [ ! -f "$EXCLUDE_FROM_GC" ]
 then
-  EXCLUDE_FROM_GC=/dev/null
+  if [ ! -z "$EXCLUDE_IMAGES" ]; then
+    for i in $EXCLUDE_IMAGES; do
+      echo $i >> $EXCLUDE_FROM_GC
+    done
+  else
+    EXCLUDE_FROM_GC=/dev/null
+  fi
 fi
 
 EXCLUDE_CONTAINERS_FROM_GC=${EXCLUDE_CONTAINERS_FROM_GC:=/etc/docker-gc-exclude-containers}
 if [ ! -f "$EXCLUDE_CONTAINERS_FROM_GC" ]
 then
-  EXCLUDE_CONTAINERS_FROM_GC=/dev/null  
+  if [ ! -z "$EXCLUDE_CONTAINERS" ]; then
+    for i in $EXCLUDE_CONTAINERS; do
+      echo $i >> $EXCLUDE_CONTAINERS_FROM_GC
+    done
+  else
+    EXCLUDE_CONTAINERS_FROM_GC=/dev/null
+  fi
 fi
 
 EXCLUDE_IDS_FILE="exclude_ids"
@@ -143,7 +158,7 @@ function compute_exclude_container_ids() {
         return
     fi
     # Find all docker images
-    # Filter out with matching names 
+    # Filter out with matching names
     # and put them to $EXCLUDE_CONTAINER_IDS_FILE
     $DOCKER ps -a \
         | grep -E "$PROCESSED_EXCLUDES" \

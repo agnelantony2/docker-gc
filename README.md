@@ -80,6 +80,12 @@ spotify/cassandra:latest
 9681260c3ad5
 ```
 
+You can also provide excluded images via environment variable `$EXCLUDE_IMAGES`
+like:
+
+    docker run -e "$EXCLUDE_IMAGES=alpine busybox" ...
+
+
 ### Excluding Containers From Garbage Collection
 
 There can also be containers (for example data only containers) which 
@@ -95,9 +101,15 @@ mariadb-data
 drunk_goodall
 ```
 
+You can also provide containers to be excluded via environment 
+variable `$EXCLUDE_CONTAINERS` like:
+
+    docker run -e "$EXCLUDE_CONTAINERS=data mysql" ...
+
 ### Dry Run
 
-If you want to do a dry run and see what will be deleted without actually really deleting images or containers you can use the ```DRY_RUN-flags```:
+If you want to do a dry run and see what will be deleted without actually
+really deleting images or containers you can use the ```DRY_RUN-flags```:
 
 ```
 DRY_RUN=true docker-gc
