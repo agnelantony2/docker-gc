@@ -129,6 +129,22 @@ DRY_RUN_IMAGES=true docker-gc
 
 the above does a dry run only on images. The flag alone can therefore be used in order to exclude the deletion of images and only delete containers.
 
+
+## All environment variables 
+
+Below you find all environment variables you can use and their default value.
+
+
+- LOG_TO_SYSLOG - 0 or 1 
+- SYSLOG_FACILITY - Defaults to "user" 
+- SYSLOG_LEVEL - Defaults to "info" 
+- SYSLOG_TAG - Defaults to "docker-gc" 
+- DRY_RUN - Defaults to "false". Sets DRY_RUN_CONTAINERS and DRY_RUN_IMAGES in one option. 
+- DRY_RUN_CONTAINERS - Defaults to "false" 
+- DRY_RUN_IMAGES - Defaults to "false" 
+- EXCLUDE_IMAGES - Space separated list of images to exclude 
+- EXCLUDE_CONTAINERS - Space separated list of containers to exclude 
+
 ## Running as a Docker Image
 
 A Dockerfile is provided as an alternative to a local installation. By default
