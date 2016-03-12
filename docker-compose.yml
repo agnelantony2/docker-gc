@@ -2,7 +2,7 @@ cleanup:
   image: eeacms/docker-gc
   privileged: true
   environment:
-  - EXCLUDE_CONTAINERS=data
+  - EXCLUDE_CONTAINERS=data rancher
   - EXCLUDE_IMAGES=busybox alpine
   - DRY_RUN_CONTAINERS=true
   - DRY_RUN_IMAGES=true
