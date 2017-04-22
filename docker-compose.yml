@@ -3,8 +3,6 @@ version: '3'
 services:
   docker-gc:
     image: agnelantony/docker-gc
-    container_name: docker-gc
-    mode: global
     privileged: true
     environment:
       - EXCLUDE_CONTAINERS=data portainer
