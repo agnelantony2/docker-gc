@@ -8,3 +8,19 @@ cleanup:
   - DRY_RUN_IMAGES=true
   volumes:
   - /var/run/docker.sock:/var/run/docker.sock
+
+version: '3'
+
+services:
+  docker-gc:
+    image: agnelantony/docker-gc
+    container_name: docker-gc
+    mode: global
+    privileged: true
+    environment:
+      - EXCLUDE_CONTAINERS=data portainer
+      - EXCLUDE_IMAGES=busybox alpine
+      - DRY_RUN_CONTAINERS=true
+      - DRY_RUN_IMAGES=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
